@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ultimate Mini Games + AI Multi Search + Party Chat</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 0;
+    background: #f0f0f0;
+  }
+  header {
+    background: #222;
+    color: white;
+    padding: 1em;
+    text-align: center;
+  }
+  section {
+    padding: 1em;
+    max-width: 1200px;
+    margin: auto;
+  }
+  h2 {
+    margin-top: 1em;
+  }
+  iframe.game {
+    width: 480px;
+    height: 320px;
+    border: 2px solid #333;
+    margin: 0.5em;
+  }
+  #search-results iframe {
+    width: 32%;
+    height: 400px;
+    border: 1px solid #ccc;
+    margin: 0.3%;
+  }
+  #ai-assistant {
+    margin-top: 2em;
+  }
+  #ai-output {
+    margin-top: 0.5em;
+    background: #ddd;
+    padding: 1em;
+    border-radius: 5px;
+    min-height: 100px;
+  }
+  input[type="text"], input[type="email"] {
+    padding: 0.5em;
+    font-size: 1em;
+    width: 80%;
+  }
+  button {
+    padding: 0.55em 1em;
+    font-size: 1em;
+    cursor: pointer;
+  }
+  @media (max-width: 900px) {
+    iframe.game {
+      width: 90%;
+      height: 300px;
+      margin: 0.5em auto;
+      display: block;
+    }
+    #search-results iframe {
+      width: 100%;
+      margin: 0.5em 0;
+      height: 400px;
+    }
+  }
+  /* Party chat styles */
+  #party-chat {
+    background: white;
+    border: 2px solid #222;
+    border-radius: 8px;
+    max-width: 600px;
+    margin: 2em auto;
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+  }
+  #messages {
+    flex: 1;
+    padding: 1em;
+    overflow-y: auto;
+    border-bottom: 1px solid #ccc;
+  }
+  #messages div {
+    margin-bottom: 0.5em;
+    padding: 0.3em 0.6em;
+    border-radius: 5px;
+    background: #eee;
+  }
+  #messages div.self {
+    background: #cce5ff;
+    text-align: right;
+  }
+  #party-form {
+    display: flex;
+    padding: 1em;
+  }
+  #party-form input[type="text"] {
+    flex: 1;
+    font-size: 1em;
+    padding: 0.5em;
+  }
+  #party-form button {
+    margin-left: 0.5em;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Ultimate Mini Games & AI Multi-Search Hub + Party Chat</h1>
+  <p>Play mini games, search the web, and chat with others in Party!</p>
+</header>
+
+<section id="games">
+  <h2>Featured Mini Games</h2>
+  <div>
+    <h3>CrazyGames - Moto X3M</h3>
+    <iframe
+      class="game"
+      src="https://www.crazygames.com/embed/moto-x3m"
+      allowfullscreen
+      sandbox="allow-scripts allow-same-origin allow-forms"
+      title="Moto X3M - CrazyGames"
+    ></iframe>
+  </div>
+  <div>
+    <h3>CoolMathGames - Run 3</h3>
+    <iframe
+      class="game"
+      src="https://www.coolmathgames.com/0-run-3"
+      allowfullscreen
+      sandbox="allow-scripts allow-same-origin allow-forms"
+      title="Run 3 - CoolMathGames"
+    ></iframe>
+  </div>
+  <div>
+    <h3>CrazyGames - Happy Wheels</h3>
+    <iframe
+      class="game"
+      src="https://www.crazygames.com/embed/happy-wheels"
+      allowfullscreen
+      sandbox="allow-scripts allow-same-origin allow-forms"
+      title="Happy Wheels - CrazyGames"
+    ></iframe>
+  </div>
+  <div>
+    <h3>CrazyGames - Shell Shockers</h3>
+    <iframe
+      class="game"
+      src="https://www.crazygames.com/embed/shell-shockers"
+      allowfullscreen
+      sandbox="allow-scripts allow-same-origin allow-forms"
+      title="Shell Shockers - CrazyGames"
+    ></iframe>
+  </div>
+  <div>
+    <h3>CrazyGames - Krunker.io</h3>
+    <iframe
+      class="game"
+      src="https://www.crazygames.com/embed/krunker-io"
+      allowfullscreen
+      sandbox="allow-scripts allow-same-origin allow-forms"
+      title="Krunker.io - CrazyGames"
+    ></iframe>
+  </div>
+</section>
+
+<section id="search">
+  <h2>AI Multi-Search</h2>
+  <form id="multiSearchForm">
+    <input type="text" id="query" placeholder="Type your search here..." required />
+    <button type="submit">Search</button>
+  </form>
+
+  <div id="search-results" style="display:none; flex-wrap: wrap; justify-content: space-between; margin-top:1em;">
+    <iframe id="googleFrame" src="" title="Google Search Results"></iframe>
+    <iframe id="bingFrame" src="" title="Bing Search Results"></iframe>
+    <iframe id="duckFrame" src="" title="DuckDuckGo Search Results"></iframe>
+  </div>
+</section>
+
+<section id="ai-assistant">
+  <h2>Simple AI Assistant (Placeholder)</h2>
+  <input type="text" id="aiInput" placeholder="Ask me anything..." />
+  <button id="aiAskBtn">Ask AI</button>
+  <div id="ai-output"></div>
+</section>
+
+<section id="party">
+  <h2>Party Chat</h2>
+  <div id="party-chat">
+    <div id="messages"></div>
+    <form id="party-form">
+      <input type="text" id="party-input" placeholder="Type your message..." autocomplete="off" required />
+      <button type="submit">Send</button>
+    </form>
+  </div>
+</section>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+<script>
+  // Multi-search form handler
+  const form = document.getElementById('multiSearchForm');
+  const searchResults = document.getElementById('search-results');
+  const googleFrame = document.getElementById('googleFrame');
+  const bingFrame = document.getElementById('bingFrame');
+  const duckFrame = document.getElementById('duckFrame');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const q = document.getElementById('query').value.trim();
+    if (!q) return;
+
+    const encodedQuery = encodeURIComponent(q);
+
+    googleFrame.src = `https://www.google.com/search?q=${encodedQuery}`;
+    bingFrame.src = `https://www.bing.com/search?q=${encodedQuery}`;
+    duckFrame.src = `https://duckduckgo.com/?q=${encodedQuery}`;
+
+    searchResults.style.display = 'flex';
+  });
+
+  // Simple AI assistant placeholder
+  const aiInput = document.getElementById('aiInput');
+  const aiAskBtn = document.getElementById('aiAskBtn');
+  const aiOutput = document.getElementById('ai-output');
+
+  aiAskBtn.addEventListener('click', () => {
+    const question = aiInput.value.trim();
+    if (!question) {
+      aiOutput.textContent = 'Please ask a question.';
+      return;
+    }
+    aiOutput.textContent = `🤖 AI Response to: "${question}"\nSorry, I am a demo assistant and cannot provide real AI responses yet. Try searching above!`;
+  });
+
+  // --- Firebase Chat Setup ---
+  // Replace with your own Firebase config
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT.firebaseio.com",
+    projectId: "YOUR_PROJECT",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  const messagesDiv = document.getElementById('messages');
+  const partyForm = document.getElementById('party-form');
+  const partyInput = document.getElementById('party-input');
+
+  // Random user id (demo only)
+  const userId = 'user-' + Math.floor(Math.random() * 10000);
+
+  // Listen for new messages
+  db.ref('partyMessages').limitToLast(50).on('child_added', (snapshot) => {
+    const msg = snapshot.val();
+    if (!msg) return;
+
+    const msgDiv = document.createElement('div');
+    msgDiv.textContent = `${msg.user}: ${msg.text}`;
+    if (msg.userId === userId) msgDiv.classList.add('self');
+    messagesDiv.appendChild(msgDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  });
+
+  // Send message
+  partyForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const text = partyInput.value.trim();
+    if (!text) return;
+
+    const newMsgRef = db.ref('partyMessages').push();
+    newMsgRef.set({
+      userId: userId,
+      user: userId,
+      text: text,
+      timestamp: Date.now()
+    });
+
+    partyInput.value = '';
+  });
+</script>
+</body>
+</html>
