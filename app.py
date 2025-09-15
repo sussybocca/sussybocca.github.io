@@ -7,9 +7,8 @@ from psycopg2.extras import RealDictCursor
 app = Flask(__name__)
 CORS(app)
 
-DATABASE_URL = os.environ.get("DATABASE_URL")
-if not DATABASE_URL:
-    raise RuntimeError("psql 'postgresql://neondb_owner:npg_wE3ISfV6yXeU@ep-bitter-hill-ad9pb0m3-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'!")
+# Neon connection string (from your message)
+DATABASE_URL = os.environ.get("DATABASE_URL") or "postgresql://neondb_owner:npg_wE3ISfV6yXeU@ep-bitter-hill-ad9pb0m3-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 
 # Connect to Neon
 def get_db_connection():
@@ -22,13 +21,18 @@ def init_db():
     try:
         with conn.cursor() as cur:
             cur.execute("""
-            psql 'postgresql://neondb_owner:npg_wE3ISfV6yXeU@ep-bitter-hill-ad9pb0m3-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require')
-            );
+                CREATE TABLE IF NOT EXISTS items (
+                    id SERIAL PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    value INTEGER NOT NULL,
+                    created_at TIMESTAMPTZ DEFAULT now()
+                );
             """)
             conn.commit()
     finally:
         conn.close()
 
+# GET all items
 @app.route("/api/items", methods=["GET"])
 def list_items():
     conn = get_db_connection()
@@ -40,11 +44,13 @@ def list_items():
     finally:
         conn.close()
 
+# POST a new item
 @app.route("/api/items", methods=["POST"])
 def create_item():
     data = request.get_json() or {}
     name = data.get("name")
     value = data.get("value")
+
     if not name or value is None:
         return jsonify({"error": "name and value required"}), 400
 
@@ -52,7 +58,8 @@ def create_item():
     try:
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute(
-            DATABASE_URL, psql 'postgresql://neondb_owner:npg_wE3ISfV6yXeU@ep-bitter-hill-ad9pb0m3-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require')
+                "INSERT INTO items (name, value) VALUES (%s, %s) RETURNING id, name, value, created_at;",
+                (name, value)
             )
             item = cur.fetchone()
             conn.commit()
@@ -60,6 +67,7 @@ def create_item():
     finally:
         conn.close()
 
+# Run app
 if __name__ == "__main__":
     init_db()
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
